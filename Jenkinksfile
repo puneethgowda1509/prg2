@@ -1,0 +1,32 @@
+pipeline{
+ agent any
+  environment{
+    DOCKERHUB_CREDENTIALS='new'
+    IMAGE_NAME='puneeth1509/new_image'
+}
+stages{
+stage('Buid'){
+steps{
+bat 'javac hello.java'
+}}
+stage('Run'){
+steps{
+bat 'java hello'
+}}
+stage('Buid image'){
+steps{
+bat ' docker build -t puneeth1509/new_image:latest .'
+}}
+stage('login'){
+steps{
+withCredentials([usernamePassword(
+credentailsId:'new',
+usernameVariable:'USER',
+passwordVariable:'PASS')]){
+bat 'echo %PASS% |docker login -u %USER% --password-stdin'}
+}}
+stage('push'){
+steps{
+bat 'docker push %IMAGE_NAME%:latest'
+}
+}}}
